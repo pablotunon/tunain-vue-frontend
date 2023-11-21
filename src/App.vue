@@ -1,26 +1,28 @@
 <template>
-  <SimpleHello :msg="message"/>
+  <div class="container mx-auto px-4">
+    <BookPage :text="text"/>
+  </div>
 </template>
 
 <script>
 import { get } from './actions'
-import SimpleHello from './components/SimpleHello.vue'
+import BookPage from './components/BookPage.vue'
 
 export default {
   name: 'App',
   components: {
-    SimpleHello
+    BookPage
   },
   data() {
     return {
       // Managers
-      message: 'not loaded',
+      text: 'not loaded',
     }
   },
   mounted() {
-    get("hello")
+    get("next-page")
       .then((response) => {
-        this.message = response.data
+        this.text = response.data
       })
       .catch((err) => {
         console.log(err)
@@ -31,6 +33,5 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
 </style>
