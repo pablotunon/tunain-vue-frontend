@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4">
+  <div class="container mx-auto px-4 h-full grid content-center">
     <BookPage :text="text"/>
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
   mounted() {
     get("next-page")
       .then((response) => {
-        this.text = response.data
+        this.text = response.text
       })
       .catch((err) => {
         console.log(err)
