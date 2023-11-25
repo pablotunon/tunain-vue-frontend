@@ -3,14 +3,13 @@ import { get, post } from "./actions"
 import { router } from "./main"
 
 
-const statusStrings = ['unauth', 'csrf', 'login', 'mfa']
+const statusStrings = ['unauth', 'csrf', 'login']
 
 export default new Vuex.Store({
   state: {
-    status: 0,  // unauth (0) -> csrf (1) -> login (2) -> mfa (3) -> permissions (4)
+    status: 0,  // unauth (0) -> csrf (1) -> login (2) -> permissions (3)
     username: '',
     password: '',
-    usersInfo: {},  // Cache { user_id: user } for saving requests to social
     nextPage: undefined, // When login is prompted we store here the desired page by the user
     permissions: []
   },
@@ -23,22 +22,14 @@ export default new Vuex.Store({
       state.username = username
       state.password = password
     },
-    mfa_success(state) {
-      state.status = 3
-      state.password = ''
-    },
     permissions_success(state, { permissions }) {
-      state.status = 4
+      state.status = 3
       state.permissions = permissions ?? []
     },
     auth_error(state) {
       state.status = 1
       state.username = ''
       state.password = ''
-    },
-    users_info(state, users) {
-      const usersMap = Object.fromEntries(users.map((u) => [u.user_id, u]));
-      state.usersInfo = { ...state.usersInfo, ...usersMap }
     },
     next_page(state, nextPage) {
       state.nextPage = nextPage
@@ -50,7 +41,6 @@ export default new Vuex.Store({
       get('permissions').then((response) => {
         // There is a valid previous sessions
         commit('login_success', { username: response.username, password: 'fakepass' })
-        commit('mfa_success')
         commit('permissions_success', { permissions: response.permissions })
         dispatch('afterLogin')
       }).catch(() => {
@@ -62,16 +52,8 @@ export default new Vuex.Store({
     },
     async login({ commit }, { username, password }) {
       return post('LOGIN', 'login', { username, password })
-        .then(() => commit('login_success', { username, password }))
-    },
-    async mfa({ commit, dispatch }, { verification }) {
-      return post('2FA', 'login/2fa', {
-        username: this.state.username,
-        password: this.state.password,
-        verification_code: verification
-      })
         .then(() => {
-          commit('mfa_success')
+          commit('login_success', { username, password })
           dispatch('permissions')
         })
     },
@@ -93,31 +75,6 @@ export default new Vuex.Store({
       return post('LOGOUT', 'logout')
         .then(() => commit('auth_error'))
     },
-
-    // --- Cache related methods -----------------------------------------
-    async getUserInfo({ commit }, { userId }) {
-      // Retrieving a single user uses the cache if available
-      if (userId in this.state.usersInfo) {
-        return this.state.usersInfo[userId]
-      } else {
-        var user = await get("social/users/info/" + userId)
-        commit("users_info", [user])
-        return user
-      }
-    },
-    async searchUsers({ commit }, params) {
-      // Retrieving multiple users overrides the cache
-      var users = await get("social/users/search", params)
-      commit("users_info", users);
-      return users
-    },
-    async getManagerUsers({ commit }) {
-      // Retrieving multiple users overrides the cache
-      var users = await get("social/users/list")
-      commit("users_info", users);
-      return users
-    },
-
   },
   getters: {
     isLoggedIn(state) {

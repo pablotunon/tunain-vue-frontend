@@ -18,6 +18,7 @@ export default {
       // Managers
       text: 'not loaded',
       userInput: '',
+      
     }
   },
   mounted() {

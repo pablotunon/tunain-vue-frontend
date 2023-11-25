@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row gap-4 mt-1 mb-6">
-    <div class="basis-1/2 text-neutral-400 text-justify">&emsp;{{ innerText }}</div>
+    <div class="basis-1/2 text-neutral-400 text-justify">&emsp;{{ text }}</div>
     <div clasS="basis-1/2"><img v-if="imgSrc" :src="imgSrc"/></div>
   </div>
   <div v-if="receivedInput">
@@ -28,11 +28,10 @@ export default {
   props: {
     text: String,
     receivedInput: String,
-    imgSrc: String
+    imgSrc: String,
   },
   data() {
     return {
-      innerText: this.text,
       createdInput: ''
     }
   },
@@ -41,7 +40,6 @@ export default {
       post("create-page", { input: this.createdInput })
         .then((response) => {
           console.log(response)
-          this.innerText = 'loading'
         })
         .catch((err) => {
           console.log(err)
