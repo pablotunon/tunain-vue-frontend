@@ -7,6 +7,17 @@ const API_HOST = 'http://127.0.0.1:8000/'
 // Axios
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.withCredentials = true
+
+// function getCookie(name) {
+//   const value = `; ${document.cookie}`;
+//   const parts = value.split(`; ${name}=`);
+//   if (parts.length === 2) return parts.pop().split(';').shift();
+// }
+
+// const csrftoken = getCookie("csrftoken")
+// axios.defaults.headers.common['X-CSRFToken'] = csrftoken
+
 
 export function apiRequest(url, data = {}, method = 'post', sendAsFiles = false) {
   return new Promise((resolve, reject) => {
@@ -25,11 +36,12 @@ export function apiRequest(url, data = {}, method = 'post', sendAsFiles = false)
       url: API_HOST + url,
       data: formData,
       method,
-      ...(sendAsFiles && {
-        headers: {
+      headers: {
+        // 'X-CSRFToken': csrftoken,
+        ...(sendAsFiles && {
           'Content-Type': 'multipart/form-data'
-        }
-      })
+        })
+      }
     })
       .then((response) => {
         resolve(response.data)
