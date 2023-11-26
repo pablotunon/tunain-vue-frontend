@@ -50,7 +50,7 @@ export default new Vuex.Store({
         // .catch(() => commit('auth_error'))
       })
     },
-    async login({ commit }, { username, password }) {
+    async login({ commit, dispatch }, { username, password }) {
       return post('LOGIN', 'login', { username, password })
         .then(() => {
           commit('login_success', { username, password })

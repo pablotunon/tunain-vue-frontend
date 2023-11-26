@@ -1,40 +1,24 @@
 <template>
-  <div class="container mx-auto px-4 h-full grid content-center bg-neutral-800">
-    <BookPage :text="text" :userInput="userInput"/>
-  </div>
+  <router-view></router-view>
 </template>
 
 <script>
-import { get } from './actions'
-import BookPage from './components/BookPage.vue'
+// import Config from "./config";
 
 export default {
-  name: 'App',
-  components: {
-    BookPage
-  },
-  data() {
-    return {
-      // Managers
-      text: 'not loaded',
-      userInput: '',
-      
-    }
-  },
+  name: "App",
   mounted() {
-    get("next-page")
-      .then((response) => {
-        this.text = response.text
-        this.receivedInput = response.input
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-      .finally(() => {
-      })
+    // Add reCaptcha script to head
+    // let recaptchaScript = document.createElement("script");
+    // recaptchaScript.setAttribute(
+    //   "src",
+    //   "https://www.google.com/recaptcha/enterprise.js?render=" +
+    //     Config.RECAPTCHA_SITE_KEY
+    // );
+    // document.head.appendChild(recaptchaScript);
   },
-}
+};
 </script>
 
-<style scoped>
+<style>
 </style>
