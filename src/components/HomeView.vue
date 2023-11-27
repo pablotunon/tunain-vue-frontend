@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-neutral-800">
     <HomeHeader />
     <main class="max-w-7xl mx-auto">
       <div class="py-4 px-8 mx-4 text-neutral-200">

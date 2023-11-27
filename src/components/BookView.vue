@@ -1,6 +1,11 @@
 <template>
   <div>
-    <BookPage :text="text" :receivedInput="userInput"/>
+    <BookPage v-for="(page, pageId) in loadedPages"
+      :key="pageId"
+      :bookId="bookId"
+      :text="page.text"
+      :receivedInput="page.input"
+    />
   </div>
 </template>
 
@@ -13,19 +18,26 @@ export default {
   components: {
     BookPage
   },
+  props: {
+    bookId: String,
+  },
   data() {
     return {
-      // Managers
-      text: 'not loaded',
-      userInput: '',
-      
+      lastPage: 1,
+      loadedPages: {},
     }
   },
   mounted() {
-    get("next-page")
+    get("page", {book_id: this.bookId, page_number: this.lastPage})
       .then((response) => {
-        this.text = response.text
-        this.receivedInput = response.input
+        this.loadedPages[response.id] = {
+          text: response.text,
+          input: response.intput,
+          number: response.number,
+          img: response.img,
+          footer: response.footer,
+        }
+        this.lastPage++
       })
       .catch((err) => {
         console.log(err)

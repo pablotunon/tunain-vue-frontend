@@ -42,8 +42,9 @@ const routes = [
       },
       {
         name: 'Book',
-        path: 'book',
-        component: BookView
+        path: 'book/:bookId',
+        component: BookView,
+        props: true,
       }
     ]
   },
