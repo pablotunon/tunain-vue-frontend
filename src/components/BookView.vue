@@ -5,6 +5,7 @@
       :bookId="bookId"
       :text="page.text"
       :receivedInput="page.input"
+      @next="this.getPage"
     />
   </div>
 </template>
@@ -28,11 +29,15 @@ export default {
     }
   },
   mounted() {
-    get("page", {book_id: this.bookId, page_number: this.lastPage})
+    this.getPage()
+  },
+  methods: {
+    getPage() {
+      get("page", {book_id: this.bookId, page_number: this.lastPage})
       .then((response) => {
         this.loadedPages[response.id] = {
           text: response.text,
-          input: response.intput,
+          input: response.input,
           number: response.number,
           img: response.img,
           footer: response.footer,
@@ -44,6 +49,7 @@ export default {
       })
       .finally(() => {
       })
+    }
   },
 }
 </script>

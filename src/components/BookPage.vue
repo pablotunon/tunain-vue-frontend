@@ -6,7 +6,7 @@
     </div>
     <div v-if="receivedInput">
       <input type="text" class="text-neutral-800 rounded-md w-full bg-neutral-500" :value="receivedInput" disabled/>
-      <button type="button" class="mt-3 rounded-md p-2.5 bg-sky-700 text-neutral-100">
+      <button v-if="!nextClicked" type="button" class="mt-3 rounded-md p-2.5 bg-sky-700 text-neutral-100" @click="clickNext">
         Read next page
       </button>
     </div>
@@ -35,7 +35,8 @@ export default {
   },
   data() {
     return {
-      createdInput: ''
+      createdInput: '',
+      nextClicked: false,
     }
   },
   methods: {
@@ -53,6 +54,10 @@ export default {
         })
         .finally(() => {
         })
+    },
+    clickNext() {
+      this.nextClicked = true
+      this.$emit("next")
     }
   }
 }
