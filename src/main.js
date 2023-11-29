@@ -7,6 +7,7 @@ import LogoutView from './components/LogoutView.vue'
 import HomeView from './components/HomeView.vue'
 import WelcomeView from './components/WelcomeView.vue'
 import BookView from './components/BookView.vue'
+import BookCreate from './components/BookCreate.vue'
 
 
 import store from './store.js'
@@ -39,6 +40,11 @@ const routes = [
         name: 'Welcome',
         path: '',
         component: WelcomeView
+      },
+      {
+        name: 'Create Book',
+        path: 'book/create',
+        component: BookCreate,
       },
       {
         name: 'Book',
