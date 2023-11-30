@@ -3,7 +3,15 @@
     <div v-if="text">
       <div class="flex flex-row gap-4 mt-1 mb-6">
         <div class="basis-1/2 text-neutral-400 text-justify">&emsp;{{ text }}</div>
-        <div clasS="basis-1/2"><img v-if="imgSrc" :src="imgSrc"/></div>
+        <div clasS="basis-1/2">
+          <img v-if="imgSrc" :src="imgSrc"/>
+          <div v-else-if="!isPolling">
+            Error
+            <button type="button" class="mt-3 rounded-md p-2.5 bg-sky-700 text-neutral-100" @click="() => resend('image')">
+              Resend for generation
+            </button>
+          </div>
+        </div>
       </div>
       <div v-if="receivedInput">
         <input type="text" :value="receivedInput" disabled class="text-neutral-800 rounded-md w-full bg-neutral-500"/>
@@ -27,6 +35,9 @@
     </div>
     <div v-else>
       Error
+      <button type="button" class="mt-3 rounded-md p-2.5 bg-sky-700 text-neutral-100" @click="() => resend('page')">
+        Resend for generation
+      </button>
     </div>
   </div>
 </template>
@@ -44,6 +55,7 @@ export default {
   },
   data() {
     return {
+      pageId: undefined,
       text: '',
       imgSrc: '',
       footer: '',
@@ -66,11 +78,13 @@ export default {
       get("page", {book_id: this.bookId, page_number: this.pageNumber})
         .then((response) => {
           if (response.text) {
+            this.pageId = response.id
             this.text = response.text
             this.receivedInput = response.input
             this.imgSrc = response.img
             this.footer = response.footer
-          } else {
+          }
+          if (!response.img) {
             this.startPolling()
           }
         })
@@ -98,6 +112,21 @@ export default {
           console.log(response)
           this.nextClicked = true
           this.$emit("next")
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+        })
+    },
+    resend(taskType) {
+      post("resend-task", {
+        book_id: this.bookId,
+        task_type: taskType,
+        page_id: this.pageId
+      })
+        .then((response) => {
+          console.log(response)
         })
         .catch((err) => {
           console.log(err)
